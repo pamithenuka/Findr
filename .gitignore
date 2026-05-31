@@ -1,0 +1,11 @@
+# Node dependencies
+node_modules/
+
+# Local environment variables (passwords/keys)
+.env
+.env.local
+
+# Expo/React Native build files
+.expo/
+dist/
+npm-debug.log*
