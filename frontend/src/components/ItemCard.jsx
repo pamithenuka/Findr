@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function ItemCard({ item }) {
   
@@ -7,7 +8,8 @@ function ItemCard({ item }) {
   const badgeBg = isLost ? 'rgba(249, 115, 22, 0.1)' : 'rgba(45, 212, 191, 0.1)';
 
   return (
-    <div style={styles.card}>
+    <Link to={`/item/${item._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+      <div style={styles.card}>
       {/* Top Meta Row: Status Badge & Category */}
       <div style={styles.metaRow}>
         <span style={{ ...styles.badge, color: statusColor, backgroundColor: badgeBg }}>
@@ -27,7 +29,8 @@ function ItemCard({ item }) {
           {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Just now'}
         </span>
       </div>
-    </div>
+      </div>
+    </Link>
   );
 }
 

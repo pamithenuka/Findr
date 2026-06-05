@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import HomeLanding from './pages/HomeLanding';
 import Dashboard from './pages/Dashboard';
+import ItemDetail from './pages/ItemDetail';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomeLanding />} />
+        <Route path="/item/:id" element={<ItemDetail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />

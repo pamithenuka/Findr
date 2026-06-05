@@ -39,6 +39,21 @@ exports.getAllItems = async (req, res) => {
     }
 };
 
+exports.getItemById = async (req, res) => {
+    try {
+        const item = await Item.findById(req.params.id).populate('postedBy', 'name email phoneNumber');
+        
+        if (!item) {
+            return res.status(404).json({ message: 'Item not found' });
+        }
+
+        res.json(item);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error fetching item', error: error.message });
+    }
+};
+
+
 
 
 exports.getUserItems = async (req, res) => {
