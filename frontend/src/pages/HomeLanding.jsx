@@ -137,7 +137,7 @@ function HomeLanding() {
             {/* Status Tabs */}
             <div style={styles.statusTabs}>
               {[
-                { key: 'all', label: 'All Items' },
+                { key: 'all', label: 'All' },
                 { key: 'lost', label: '🔍 Lost' },
                 { key: 'found', label: '🤝 Found' },
               ].map((tab) => {
