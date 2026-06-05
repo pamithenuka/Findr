@@ -4,10 +4,10 @@ const { createItem, getAllItems, getUserItems, resolveItem, deleteItem, getItemB
 const { protect } = require('../middleware/authMiddleware');
 
 router.get('/', getAllItems);
+router.get('/dashboard', protect, getUserItems);
 router.get('/:id', getItemById);
 
 router.post('/', protect, createItem);
-router.get('/dashboard', protect, getUserItems);
 router.put('/:id/resolve', protect, resolveItem);
 router.delete('/:id', protect, deleteItem);
 

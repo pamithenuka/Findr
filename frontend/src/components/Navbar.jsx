@@ -28,6 +28,7 @@ function Navbar() {
           {user ? (
             <>
               <Link to="/dashboard" style={styles.link}>My Dashboard</Link>
+              <Link to="/profile" style={styles.link}>Profile</Link>
               <span style={styles.welcomeText}>Hi, {user.name.split(' ')[0]} 👋</span>
               <button onClick={handleLogout} className="btn-secondary" style={styles.logoutBtn}>
                 Log Out
