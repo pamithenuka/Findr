@@ -74,3 +74,25 @@ exports.resolveItem = async (req, res) => {
     }
 };
 
+
+exports.deleteItem = async (req, res) => {
+    try {
+        const item = await Item.findById(req.params.id);
+
+        if (!item) {
+            return res.status(404).json({ message: 'Item not found' });
+        }
+
+        // Only the owner or an admin can delete a listing
+        if (item.postedBy.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            return res.status(401).json({ message: 'Not authorized to delete this item' });
+        }
+
+        await Item.findByIdAndDelete(req.params.id);
+
+        res.json({ message: 'Item listing deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error deleting item', error: error.message });
+    }
+};
+
