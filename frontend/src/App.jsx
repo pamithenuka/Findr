@@ -4,8 +4,7 @@ import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import HomeLanding from './pages/HomeLanding';
-
-const Dashboard = () => <div style={{ padding: '3rem 2rem', maxWidth: '1200px', margin: '0 auto' }}><h1>📊 User Dashboard Coming Soon</h1></div>;
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
