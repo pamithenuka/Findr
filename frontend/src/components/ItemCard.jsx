@@ -10,24 +10,32 @@ function ItemCard({ item }) {
   return (
     <Link to={`/item/${item._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <div style={styles.card}>
-      {/* Top Meta Row: Status Badge & Category */}
-      <div style={styles.metaRow}>
-        <span style={{ ...styles.badge, color: statusColor, backgroundColor: badgeBg }}>
-          {item.status?.toUpperCase()}
-        </span>
-        <span style={styles.category}>{item.category}</span>
-      </div>
+      {item.imageUrl && (
+        <div className="card-image-wrapper">
+          <img src={`http://localhost:5001${item.imageUrl}`} alt={item.title} className="card-image" />
+        </div>
+      )}
+      
+      <div style={styles.cardBody}>
+        {/* Top Meta Row: Status Badge & Category */}
+        <div style={styles.metaRow}>
+          <span style={{ ...styles.badge, color: statusColor, backgroundColor: badgeBg }}>
+            {item.status?.toUpperCase()}
+          </span>
+          <span style={styles.category}>{item.category}</span>
+        </div>
 
-      {/* Item Details */}
-      <h3 style={styles.title}>{item.title}</h3>
-      <p style={styles.description}>{item.description}</p>
+        {/* Item Details */}
+        <h3 style={styles.title}>{item.title}</h3>
+        <p style={styles.description}>{item.description}</p>
 
-      {/* Card Footer: Location & Date */}
-      <div style={styles.footerRow}>
-        <span style={styles.location}>📍 {item.location}</span>
-        <span style={styles.date}>
-          {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Just now'}
-        </span>
+        {/* Card Footer: Location & Date */}
+        <div style={styles.footerRow}>
+          <span style={styles.location}>📍 {item.location}</span>
+          <span style={styles.date}>
+            {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Just now'}
+          </span>
+        </div>
       </div>
       </div>
     </Link>
@@ -39,12 +47,16 @@ const styles = {
     backgroundColor: 'var(--surface-card)',
     border: '1px solid var(--border-muted)',
     borderRadius: 'var(--border-radius)',
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '200px',
+    transition: 'transform 0.2s ease, border-color 0.2s ease',
+  },
+  cardBody: {
     padding: '1.5rem',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between',
-    minHeight: '200px',
-    transition: 'transform 0.2s ease, border-color 0.2s ease',
+    flexGrow: 1,
   },
   metaRow: {
     display: 'flex',

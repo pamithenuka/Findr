@@ -15,6 +15,7 @@ function Dashboard() {
   const [formData, setFormData] = useState({
     title: '', description: '', category: 'Electronics', location: '', status: 'lost'
   });
+  const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -52,9 +53,20 @@ function Dashboard() {
     setError(''); setSuccess(''); setLoading(true);
 
     try {
-      await API.post('/items', formData);
+      const data = new FormData();
+      data.append('title', formData.title);
+      data.append('description', formData.description);
+      data.append('category', formData.category);
+      data.append('location', formData.location);
+      data.append('status', formData.status);
+      if (imageFile) {
+        data.append('image', imageFile);
+      }
+
+      await API.post('/items', data);
       setSuccess(`Success! Your ${formData.status} listing has been posted.`);
       setFormData({ title: '', description: '', category: 'Electronics', location: '', status: formData.status });
+      setImageFile(null);
       fetchMyItems(); // Refresh history immediately!
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to submit post.');
@@ -135,6 +147,15 @@ function Dashboard() {
             </div>
             <div style={styles.inputGroup}><label style={styles.label}>Campus Location</label><input type="text" name="location" required style={styles.input} placeholder="e.g., Main Canteen" value={formData.location} onChange={handleChange} /></div>
             <div style={styles.inputGroup}><label style={styles.label}>Detailed Description</label><textarea name="description" required style={styles.textarea} rows="4" placeholder="Provide distinctive features..." value={formData.description} onChange={handleChange} /></div>
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>Upload Image (Optional)</label>
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={(e) => setImageFile(e.target.files[0])} 
+                style={styles.fileInput} 
+              />
+            </div>
             <button type="submit" disabled={loading} style={{ ...styles.submitBtn, backgroundColor: isLost ? 'var(--accent-coral)' : 'var(--accent-teal)', color: isLost ? 'var(--text-white)' : 'var(--bg-navy)' }}>
               {loading ? 'Submitting...' : `Submit ${formData.status.toUpperCase()} Listing`}
             </button>
@@ -246,6 +267,7 @@ const styles = {
   input: { backgroundColor: 'var(--bg-navy)', border: '1px solid var(--border-muted)', borderRadius: '8px', padding: '0.75rem 1rem', color: 'var(--text-white)', fontSize: '0.95rem', outline: 'none' },
   select: { backgroundColor: 'var(--bg-navy)', border: '1px solid var(--border-muted)', borderRadius: '8px', padding: '0.75rem 1rem', color: 'var(--text-white)', fontSize: '0.95rem', outline: 'none', cursor: 'pointer' },
   textarea: { backgroundColor: 'var(--bg-navy)', border: '1px solid var(--border-muted)', borderRadius: '8px', padding: '0.75rem 1rem', color: 'var(--text-white)', fontSize: '0.95rem', outline: 'none', resize: 'none' },
+  fileInput: { color: 'var(--text-muted)', fontSize: '0.9rem', padding: '0.5rem 0', cursor: 'pointer' },
   submitBtn: { border: 'none', padding: '1rem', borderRadius: '8px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer', marginTop: '0.5rem', transition: 'opacity 0.2s ease' },
   placeholderBox: { border: '2px dashed var(--border-muted)', borderRadius: '8px', padding: '3rem 2rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 },
   statusText: { color: 'var(--text-muted)', textAlign: 'center', margin: 'auto 0' },

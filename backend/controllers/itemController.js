@@ -2,10 +2,16 @@ const Item = require('../models/Item');
 
 exports.createItem = async (req, res) => {
     try{
-        const { title, description, category, status, location, imageUrl} = req.body;
+        const { title, description, category, status, location } = req.body;
 
         if(!title || !description || !category || !status || !location) {
-            return res.status(400).json({ message: 'PLease fill in all required fields' });
+            return res.status(400).json({ message: 'Please fill in all required fields' });
+        }
+
+        // Check for uploaded file
+        let finalImageUrl = req.body.imageUrl || '';
+        if (req.file) {
+            finalImageUrl = `/uploads/${req.file.filename}`;
         }
 
         const item = await Item.create({
@@ -14,7 +20,7 @@ exports.createItem = async (req, res) => {
             category,
             status,
             location,
-            imageUrl: imageUrl || '',
+            imageUrl: finalImageUrl,
             postedBy: req.user._id
         });
 

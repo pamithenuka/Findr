@@ -56,6 +56,13 @@ function ItemDetail() {
       </button>
 
       <div style={styles.detailCard}>
+        {/* Optional Image Section */}
+        {item.imageUrl && (
+          <div style={styles.imageContainer}>
+            <img src={`http://localhost:5001${item.imageUrl}`} alt={item.title} style={styles.detailImage} />
+          </div>
+        )}
+
         {/* Header Section */}
         <div style={styles.header}>
           <div>
@@ -146,6 +153,22 @@ const styles = {
     border: '1px solid var(--border-muted)',
     borderRadius: 'var(--border-radius)',
     overflow: 'hidden',
+  },
+  imageContainer: {
+    width: '100%',
+    maxHeight: '400px',
+    backgroundColor: 'rgba(26, 31, 53, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderBottom: '1px solid rgba(58, 66, 96, 0.4)',
+  },
+  detailImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'contain',
+    maxHeight: '400px',
   },
   header: {
     padding: '2rem',
