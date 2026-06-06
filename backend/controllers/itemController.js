@@ -58,7 +58,14 @@ exports.getItemById = async (req, res) => {
 
 exports.getUserItems = async (req, res) => {
     try{
-        const items = await Item.find({ postedBy: req.user._id}).sort({ createdAt: -1 });
+        const filter = { postedBy: req.user._id };
+        
+        // By default show all items; if showResolved=false, hide resolved ones
+        if (req.query.showResolved === 'false') {
+            filter.isResolved = false;
+        }
+
+        const items = await Item.find(filter).sort({ createdAt: -1 });
 
         res.json(items);
     }catch (error) {
@@ -70,7 +77,7 @@ exports.getUserItems = async (req, res) => {
 
 exports.resolveItem = async (req, res) => {
     try{
-        const item = await Item.findById(req.id || req.params.id);
+        const item = await Item.findById(req.params.id);
 
         if(!item) {
             return res.status(404).json({ message: 'Item not found' });
