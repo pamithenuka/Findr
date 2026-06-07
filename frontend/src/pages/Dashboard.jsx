@@ -115,7 +115,7 @@ function Dashboard() {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container} className="container fade-in">
       <h1 style={styles.pageTitle}>User Dashboard</h1>
       <p style={styles.pageSubtitle}>Welcome back, {user?.name || 'Student'}! Manage your campus postings here.</p>
 

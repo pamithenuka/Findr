@@ -95,8 +95,8 @@ function Profile() {
   if (!profileData) return null;
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.pageTitle}>User Profile</h1>
+    <div style={styles.container} className="container fade-in">
+      <h1 style={styles.pageTitle}>Your Profile</h1>
       <p style={styles.pageSubtitle}>Manage your account details and view your impact.</p>
 
       {message && <div style={styles.successAlert}>{message}</div>}

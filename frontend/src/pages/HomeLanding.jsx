@@ -81,7 +81,7 @@ function HomeLanding() {
   const hasActiveFilters = searchQuery.trim() || statusFilter !== 'all' || categoryFilter !== 'all';
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container} className="container fade-in">
       {/* --- HERO SECTION --- */}
       <header style={styles.hero}>
         <h1 style={styles.headline}>
@@ -208,7 +208,7 @@ function HomeLanding() {
           </div>
         ) : (
           /* Responsive CSS Grid to display items neatly */
-          <div style={styles.grid}>
+          <div style={styles.grid} className="items-grid">
             {filteredItems.map((item) => (
               <ItemCard key={item._id} item={item} />
             ))}

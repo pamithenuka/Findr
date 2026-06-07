@@ -17,14 +17,14 @@ function Navbar() {
 
   return (
     <nav style={styles.nav}>
-      <div style={styles.container}>
+      <div style={styles.container} className="navbar-content">
         {/* Brand Logo Linked to Home Feed */}
         <Link to="/" style={styles.logo}>
           Findr<span style={{ color: 'var(--accent-teal)' }}>.</span>
         </Link>
 
         {/* Dynamic Navigation Links based on Auth State */}
-        <div style={styles.navLinks}>
+        <div style={styles.navLinks} className="navbar-links">
           {user ? (
             <>
               <Link to="/dashboard" style={styles.link}>My Dashboard</Link>

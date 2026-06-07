@@ -82,7 +82,7 @@ function AdminPanel() {
   }
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container} className="container fade-in">
       <h1 style={styles.pageTitle}>Admin Moderation Panel</h1>
       <p style={styles.pageSubtitle}>Manage users and oversee all platform listings.</p>
 

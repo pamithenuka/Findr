@@ -50,7 +50,7 @@ function ItemDetail() {
   const badgeBg = isLost ? 'rgba(249, 115, 22, 0.1)' : 'rgba(45, 212, 191, 0.1)';
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container} className="container fade-in">
       <button onClick={() => navigate(-1)} style={styles.backBtn}>
         ← Back
       </button>
