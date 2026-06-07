@@ -29,6 +29,9 @@ function Navbar() {
             <>
               <Link to="/dashboard" style={styles.link}>My Dashboard</Link>
               <Link to="/profile" style={styles.link}>Profile</Link>
+              {user.role === 'admin' && (
+                <Link to="/admin" style={{ ...styles.link, color: 'var(--accent-coral)' }}>Admin Panel</Link>
+              )}
               <span style={styles.welcomeText}>Hi, {user.name.split(' ')[0]} 👋</span>
               <button onClick={handleLogout} className="btn-secondary" style={styles.logoutBtn}>
                 Log Out

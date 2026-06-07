@@ -40,7 +40,7 @@ const protect = async (req, res, next) => {
 // MIDDLEWARE 2: Restricts specific routes strictly to Admins
 const admin = (req, res, next) => {
     if (req.user && req.user.role === 'admin') {
-        next(); // User is an admin, let them pass
+        next();
     } else {
         res.status(403).json({ message: 'Not authorized as an admin' });
     }

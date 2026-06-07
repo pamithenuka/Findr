@@ -26,6 +26,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/admin', require('./routes/adminRoutes'));
 
 
 // Test Route
