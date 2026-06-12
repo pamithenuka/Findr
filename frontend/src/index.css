@@ -81,6 +81,34 @@ body {
   transform: scale(1.08);
 }
 
+.placeholder-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  background-color: rgba(26, 31, 53, 0.3);
+  border-bottom: 1px solid rgba(58, 66, 96, 0.4);
+}
+
+.item-card:hover {
+  transform: scale(1.03);
+  border-color: var(--accent-teal);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+.view-more-btn {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s ease;
+}
+
+.item-card:hover .view-more-btn {
+  opacity: 0.7;
+}
+
 /* Page Load Animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

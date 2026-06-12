@@ -9,10 +9,14 @@ function ItemCard({ item }) {
 
   return (
     <Link to={`/item/${item._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-      <div style={styles.card}>
-      {item.imageUrl && (
+      <div style={styles.card} className="item-card">
+      {item.imageUrl ? (
         <div className="card-image-wrapper">
           <img src={`http://localhost:5001${item.imageUrl}`} alt={item.title} className="card-image" />
+        </div>
+      ) : (
+        <div className="card-image-wrapper placeholder-image">
+          <span>📸 No image uploaded</span>
         </div>
       )}
       
@@ -29,12 +33,21 @@ function ItemCard({ item }) {
         <h3 style={styles.title}>{item.title}</h3>
         <p style={styles.description}>{item.description}</p>
 
-        {/* Card Footer: Location & Date */}
+        {/* Card Footer: Location & Date & View Button */}
         <div style={styles.footerRow}>
-          <span style={styles.location}>📍 {item.location}</span>
-          <span style={styles.date}>
-            {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Just now'}
-          </span>
+          <div style={styles.footerInfo}>
+            <span style={styles.location}>📍 {item.location}</span>
+            <span style={styles.date}>
+              📅 {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Just now'}
+            </span>
+          </div>
+
+          {/* View Details Button */}
+          <div style={styles.viewMoreContainer}>
+            <span className="view-more-btn" style={{ color: statusColor }}>
+              View Details →
+            </span>
+          </div>
         </div>
       </div>
       </div>
@@ -49,8 +62,8 @@ const styles = {
     borderRadius: 'var(--border-radius)',
     display: 'flex',
     flexDirection: 'column',
-    minHeight: '200px',
-    transition: 'transform 0.2s ease, border-color 0.2s ease',
+    height: '440px',
+    transition: 'transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease',
   },
   cardBody: {
     padding: '1.5rem',
@@ -89,6 +102,10 @@ const styles = {
     lineHeight: '1.4',
     marginBottom: '1.5rem',
     flexGrow: 1,
+    display: '-webkit-box',
+    WebkitLineClamp: 3,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
   },
   footerRow: {
     display: 'flex',
@@ -96,6 +113,12 @@ const styles = {
     alignItems: 'center',
     borderTop: '1px solid rgba(58, 66, 96, 0.4)',
     paddingTop: '0.75rem',
+    marginTop: 'auto',
+  },
+  footerInfo: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.25rem',
     fontSize: '0.85rem',
   },
   location: {
@@ -104,6 +127,9 @@ const styles = {
   },
   date: {
     color: 'var(--text-muted)',
+  },
+  viewMoreContainer: {
+    textAlign: 'right',
   },
 };
 
