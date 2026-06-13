@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../utils/api';
+import { MapPin, Calendar, Mail, Phone } from 'lucide-react';
 
 function ItemDetail() {
   const { id } = useParams();
@@ -77,8 +78,8 @@ function ItemDetail() {
                 </div>
                 <h1 style={styles.title}>{item.title}</h1>
                 <div style={styles.locationDate}>
-                  <span>📍 {item.location}</span>
-                  <span>📅 {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Unknown date'}</span>
+                  <span><MapPin size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> {item.location}</span>
+                  <span><Calendar size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Unknown date'}</span>
                 </div>
               </div>
             </div>
@@ -107,7 +108,7 @@ function ItemDetail() {
                     <div style={styles.contactItem}>
                       <span style={styles.contactLabel}>Email</span>
                       <a href={`mailto:${item.postedBy.email}`} style={styles.contactLink}>
-                        ✉️ {item.postedBy.email}
+                        <Mail size={16} style={{ marginRight: '4px' }}/> {item.postedBy.email}
                       </a>
                     </div>
                   )}
@@ -115,7 +116,7 @@ function ItemDetail() {
                     <div style={styles.contactItem}>
                       <span style={styles.contactLabel}>Phone Number</span>
                       <a href={`tel:${item.postedBy.phoneNumber}`} style={styles.contactLink}>
-                        📞 {item.postedBy.phoneNumber}
+                        <Phone size={16} style={{ marginRight: '4px' }}/> {item.postedBy.phoneNumber}
                       </a>
                     </div>
                   )}

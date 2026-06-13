@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Hand } from 'lucide-react';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ function Navbar() {
               {user.role === 'admin' && (
                 <Link to="/admin" style={{ ...styles.link, color: 'var(--accent-coral)' }}>Admin Panel</Link>
               )}
-              <span style={styles.welcomeText}>Hi, {user.name.split(' ')[0]} 👋</span>
+              <span style={styles.welcomeText}>Hi, {user.name.split(' ')[0]} <Hand size={16} style={{ verticalAlign: 'middle', marginLeft: '4px' }}/></span>
               <button onClick={handleLogout} className="btn-secondary" style={styles.logoutBtn}>
                 Log Out
               </button>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import API from '../utils/api';
+import { Search, Handshake, CheckCircle, MapPin } from 'lucide-react';
 
 function Dashboard() {
   const location = useLocation();
@@ -125,8 +126,8 @@ function Dashboard() {
           <h2 style={styles.sectionTitle}>Report an Item</h2>
           
           <div style={styles.toggleGroup}>
-            <button type="button" onClick={() => setFormData({ ...formData, status: 'lost' })} style={{ ...styles.toggleTab, ...(isLost ? activeTabStyle : {}) }}>🔍 Lost Item</button>
-            <button type="button" onClick={() => setFormData({ ...formData, status: 'found' })} style={{ ...styles.toggleTab, ...(!isLost ? activeTabStyle : {}) }}>🤝 Found Item</button>
+            <button type="button" onClick={() => setFormData({ ...formData, status: 'lost' })} style={{ ...styles.toggleTab, ...(isLost ? activeTabStyle : {}) }}><Search size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> Lost Item</button>
+            <button type="button" onClick={() => setFormData({ ...formData, status: 'found' })} style={{ ...styles.toggleTab, ...(!isLost ? activeTabStyle : {}) }}><Handshake size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> Found Item</button>
           </div>
 
           {error && <div style={styles.errorAlert}>{error}</div>}
@@ -211,9 +212,9 @@ function Dashboard() {
                           {item.status?.toUpperCase()}
                         </span>
                         {isResolved && (
-                          <span style={styles.resolvedBadge}>✅ RESOLVED</span>
+                          <span style={styles.resolvedBadge}><CheckCircle size={12} style={{ verticalAlign: 'text-bottom', marginRight: '2px' }}/> RESOLVED</span>
                         )}
-                        <span style={styles.rowDate}>📍 {item.location}</span>
+                        <span style={styles.rowDate}><MapPin size={12} style={{ verticalAlign: 'text-bottom', marginRight: '2px' }}/> {item.location}</span>
                       </div>
                       <h4 style={{
                         ...styles.rowTitle,
@@ -229,7 +230,7 @@ function Dashboard() {
                           onClick={() => handleResolve(item._id)}
                           style={styles.resolveBtn}
                         >
-                          ✅ Resolve
+                          <CheckCircle size={14} style={{ verticalAlign: 'text-bottom', marginRight: '2px' }}/> Resolve
                         </button>
                       )}
                       <button 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Camera, MapPin, Calendar } from 'lucide-react';
 
 function ItemCard({ item }) {
   
@@ -16,7 +17,7 @@ function ItemCard({ item }) {
         </div>
       ) : (
         <div className="card-image-wrapper placeholder-image">
-          <span>📸 No image uploaded</span>
+          <span><Camera size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> No image uploaded</span>
         </div>
       )}
       
@@ -36,9 +37,9 @@ function ItemCard({ item }) {
         {/* Card Footer: Location & Date & View Button */}
         <div style={styles.footerRow}>
           <div style={styles.footerInfo}>
-            <span style={styles.location}>📍 {item.location}</span>
+            <span style={styles.location}><MapPin size={14} style={{ verticalAlign: 'text-bottom', marginRight: '2px' }}/> {item.location}</span>
             <span style={styles.date}>
-              📅 {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Just now'}
+              <Calendar size={14} style={{ verticalAlign: 'text-bottom', marginRight: '2px' }}/> {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Just now'}
             </span>
           </div>
 

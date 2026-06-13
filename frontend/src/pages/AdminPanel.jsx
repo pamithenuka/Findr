@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../utils/api';
+import { CheckCircle } from 'lucide-react';
 
 function AdminPanel() {
   const navigate = useNavigate();
@@ -172,7 +173,7 @@ function AdminPanel() {
                           ...styles.statusBadge, 
                           color: item.status === 'lost' ? 'var(--accent-coral)' : 'var(--accent-teal)'
                         }}>
-                          {item.isResolved ? '✅ RESOLVED' : item.status.toUpperCase()}
+                          {item.isResolved ? <><CheckCircle size={14} style={{ verticalAlign: 'text-bottom', marginRight: '2px' }}/> RESOLVED</> : item.status.toUpperCase()}
                         </span>
                       </td>
                       <td style={styles.td}>{item.title}</td>

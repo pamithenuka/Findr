@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../utils/api';
 import ItemCard from '../components/ItemCard'; 
+import { Search, Handshake } from 'lucide-react';
 
 function HomeLanding() {
   const navigate = useNavigate();
@@ -94,10 +95,10 @@ function HomeLanding() {
 
         <div style={styles.ctaGroup}>
           <button onClick={() => handleAction('lost')} style={styles.lostBtn}>
-            🔍 I Lost Something
+            <Search size={18} style={{ verticalAlign: 'text-bottom', marginRight: '6px' }}/> I Lost Something
           </button>
           <button onClick={() => handleAction('found')} style={styles.foundBtn}>
-            🤝 I Found Something
+            <Handshake size={18} style={{ verticalAlign: 'text-bottom', marginRight: '6px' }}/> I Found Something
           </button>
         </div>
       </header>
@@ -113,7 +114,7 @@ function HomeLanding() {
         <div style={styles.filterToolbar}>
           {/* Search Bar */}
           <div style={styles.searchWrapper}>
-            <span style={styles.searchIcon}>🔍</span>
+            <span style={styles.searchIcon}><Search size={16} /></span>
             <input
               type="text"
               placeholder="Search by item name, description, or location..."
@@ -138,8 +139,8 @@ function HomeLanding() {
             <div style={styles.statusTabs}>
               {[
                 { key: 'all', label: 'All' },
-                { key: 'lost', label: '🔍 Lost' },
-                { key: 'found', label: '🤝 Found' },
+                { key: 'lost', label: <><Search size={14} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> Lost</> },
+                { key: 'found', label: <><Handshake size={14} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> Found</> },
               ].map((tab) => {
                 const isActive = statusFilter === tab.key;
                 let activeStyle = {};
