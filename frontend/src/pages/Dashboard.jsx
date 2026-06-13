@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import API from '../utils/api';
-import { Search, Handshake, CheckCircle, MapPin } from 'lucide-react';
+import { Search, Handshake, CheckCircle, MapPin, Calendar } from 'lucide-react';
 
 function Dashboard() {
   const location = useLocation();
@@ -14,7 +14,7 @@ function Dashboard() {
   // State Management
   const [myItems, setMyItems] = useState([]);
   const [formData, setFormData] = useState({
-    title: '', description: '', category: 'Electronics', location: '', status: 'lost'
+    title: '', description: '', category: 'Electronics', location: '', status: 'lost', dateLostFound: new Date().toISOString().split('T')[0]
   });
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState('');
@@ -60,13 +60,14 @@ function Dashboard() {
       data.append('category', formData.category);
       data.append('location', formData.location);
       data.append('status', formData.status);
+      data.append('dateLostFound', formData.dateLostFound);
       if (imageFile) {
         data.append('image', imageFile);
       }
 
       await API.post('/items', data);
       setSuccess(`Success! Your ${formData.status} listing has been posted.`);
-      setFormData({ title: '', description: '', category: 'Electronics', location: '', status: formData.status });
+      setFormData({ title: '', description: '', category: 'Electronics', location: '', status: formData.status, dateLostFound: new Date().toISOString().split('T')[0] });
       setImageFile(null);
       fetchMyItems(); // Refresh history immediately!
     } catch (err) {
@@ -147,6 +148,7 @@ function Dashboard() {
               </select>
             </div>
             <div style={styles.inputGroup}><label style={styles.label}>Campus Location</label><input type="text" name="location" required style={styles.input} placeholder="e.g., Main Canteen" value={formData.location} onChange={handleChange} /></div>
+            <div style={styles.inputGroup}><label style={styles.label}><Calendar size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> Date Lost / Found</label><input type="date" name="dateLostFound" required style={styles.input} value={formData.dateLostFound} onChange={handleChange} /></div>
             <div style={styles.inputGroup}><label style={styles.label}>Detailed Description</label><textarea name="description" required style={styles.textarea} rows="4" placeholder="Provide distinctive features..." value={formData.description} onChange={handleChange} /></div>
             <div style={styles.inputGroup}>
               <label style={styles.label}>Upload Image (Optional)</label>

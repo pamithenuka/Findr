@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../utils/api';
-import { MapPin, Calendar, Mail, Phone } from 'lucide-react';
+import { MapPin, Calendar, Mail, Phone, Tag, Clock } from 'lucide-react';
 
 function ItemDetail() {
   const { id } = useParams();
@@ -60,6 +60,16 @@ function ItemDetail() {
         {/* Left Main Column */}
         <div style={styles.mainColumn}>
           <div style={styles.detailCard}>
+            {/* Top Header Section (Badge & Title) */}
+            <div style={styles.topHeader}>
+              <div style={styles.metaRow}>
+                <span style={{ ...styles.badge, color: statusColor, backgroundColor: badgeBg }}>
+                  {item.status?.toUpperCase()}
+                </span>
+              </div>
+              <h1 style={styles.title}>{item.title}</h1>
+            </div>
+
             {/* Optional Image Section */}
             {item.imageUrl && (
               <div style={styles.imageContainer}>
@@ -67,20 +77,12 @@ function ItemDetail() {
               </div>
             )}
 
-            {/* Header Section */}
-            <div style={styles.header}>
-              <div>
-                <div style={styles.metaRow}>
-                  <span style={{ ...styles.badge, color: statusColor, backgroundColor: badgeBg }}>
-                    {item.status?.toUpperCase()}
-                  </span>
-                  <span style={styles.category}>{item.category}</span>
-                </div>
-                <h1 style={styles.title}>{item.title}</h1>
-                <div style={styles.locationDate}>
-                  <span><MapPin size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> {item.location}</span>
-                  <span><Calendar size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Unknown date'}</span>
-                </div>
+            {/* Sub Header Section (Location & Date) */}
+            <div style={styles.subHeader}>
+              <div style={styles.locationDate}>
+                <span style={styles.category}><Tag size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> {item.category}</span>
+                <span><MapPin size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> {item.location}</span>
+                <span><Calendar size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> {item.dateLostFound ? new Date(item.dateLostFound).toLocaleDateString() : (item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Unknown date')}</span>
               </div>
             </div>
 
@@ -88,6 +90,10 @@ function ItemDetail() {
             <div style={styles.body}>
               <h3 style={styles.sectionTitle}>Description</h3>
               <p style={styles.description}>{item.description}</p>
+              <div style={styles.postedOn}>
+                <Clock size={14} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/>
+                Posted on {item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + ' at ' + new Date(item.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'Unknown'}
+              </div>
             </div>
           </div>
         </div>
@@ -188,8 +194,12 @@ const styles = {
     objectFit: 'contain',
     maxHeight: '400px',
   },
-  header: {
-    padding: '2rem',
+  topHeader: {
+    padding: '2rem 2rem 1.5rem 2rem',
+    borderBottom: '1px solid rgba(58, 66, 96, 0.4)',
+  },
+  subHeader: {
+    padding: '1.5rem 2rem',
     borderBottom: '1px solid rgba(58, 66, 96, 0.4)',
   },
   metaRow: {
@@ -251,6 +261,15 @@ const styles = {
     color: 'var(--text-muted)',
     lineHeight: '1.6',
     whiteSpace: 'pre-wrap',
+  },
+  postedOn: {
+    marginTop: '2rem',
+    paddingTop: '1rem',
+    borderTop: '1px solid rgba(58, 66, 96, 0.4)',
+    fontSize: '0.85rem',
+    color: 'var(--text-muted)',
+    display: 'flex',
+    alignItems: 'center',
   },
   contactCard: {
     backgroundColor: 'var(--surface-card)',

@@ -32,6 +32,10 @@ const ItemSchema = new mongoose.Schema({
         type: String,
         default: '' 
     },
+    dateLostFound: {
+        type: Date,
+        default: Date.now
+    },
     
     postedBy: {
         type: mongoose.Schema.Types.ObjectId,

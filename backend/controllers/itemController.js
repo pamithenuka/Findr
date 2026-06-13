@@ -2,7 +2,7 @@ const Item = require('../models/Item');
 
 exports.createItem = async (req, res) => {
     try{
-        const { title, description, category, status, location } = req.body;
+        const { title, description, category, status, location, dateLostFound } = req.body;
 
         if(!title || !description || !category || !status || !location) {
             return res.status(400).json({ message: 'Please fill in all required fields' });
@@ -21,6 +21,7 @@ exports.createItem = async (req, res) => {
             status,
             location,
             imageUrl: finalImageUrl,
+            dateLostFound: dateLostFound || Date.now(),
             postedBy: req.user._id
         });
 
