@@ -268,7 +268,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '0.25rem',
-    marginBottom: '1rem',
+    marginBottom: '1.75rem',
   },
   contactLabel: {
     fontSize: '0.75rem',
