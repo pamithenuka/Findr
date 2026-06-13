@@ -148,4 +148,14 @@ body {
     flex-wrap: wrap;
     justify-content: center;
   }
+  
+  /* Make content-split stack on mobile */
+  .content-split {
+    flex-direction: column !important;
+  }
+  
+  .content-split > div:first-child {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(58, 66, 96, 0.4);
+  }
 }

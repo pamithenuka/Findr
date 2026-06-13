@@ -55,66 +55,83 @@ function ItemDetail() {
         ← Back
       </button>
 
-      <div style={styles.detailCard}>
-        {/* Optional Image Section */}
-        {item.imageUrl && (
-          <div style={styles.imageContainer}>
-            <img src={`http://localhost:5001${item.imageUrl}`} alt={item.title} style={styles.detailImage} />
-          </div>
-        )}
-
-        {/* Header Section */}
-        <div style={styles.header}>
-          <div>
-            <div style={styles.metaRow}>
-              <span style={{ ...styles.badge, color: statusColor, backgroundColor: badgeBg }}>
-                {item.status?.toUpperCase()}
-              </span>
-              <span style={styles.category}>{item.category}</span>
-            </div>
-            <h1 style={styles.title}>{item.title}</h1>
-            <div style={styles.locationDate}>
-              <span>📍 {item.location}</span>
-              <span>📅 {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Unknown date'}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Body Section */}
-        <div style={styles.body}>
-          <h3 style={styles.sectionTitle}>Description</h3>
-          <p style={styles.description}>{item.description}</p>
-        </div>
-
-        {/* Contact Section */}
-        <div style={styles.contactSection}>
-          <h3 style={styles.sectionTitle}>Posted By</h3>
-          {item.postedBy ? (
-            <div style={styles.contactInfo}>
-              <p style={styles.contactName}>{item.postedBy.name}</p>
-              <div style={styles.contactDetails}>
-                {item.postedBy.email && (
-                  <a href={`mailto:${item.postedBy.email}`} style={styles.contactLink}>
-                    ✉️ {item.postedBy.email}
-                  </a>
-                )}
-                {item.postedBy.phoneNumber && (
-                  <a href={`tel:${item.postedBy.phoneNumber}`} style={styles.contactLink}>
-                    📞 {item.postedBy.phoneNumber}
-                  </a>
-                )}
+      <div style={styles.pageLayout} className="content-split">
+        {/* Left Main Column */}
+        <div style={styles.mainColumn}>
+          <div style={styles.detailCard}>
+            {/* Optional Image Section */}
+            {item.imageUrl && (
+              <div style={styles.imageContainer}>
+                <img src={`http://localhost:5001${item.imageUrl}`} alt={item.title} style={styles.detailImage} />
               </div>
-              <a 
-                href={`mailto:${item.postedBy.email}?subject=Regarding your ${item.status} item: ${item.title}`}
-                className="btn-primary" 
-                style={{ ...styles.contactBtn, backgroundColor: statusColor }}
-              >
-                Contact Poster
-              </a>
+            )}
+
+            {/* Header Section */}
+            <div style={styles.header}>
+              <div>
+                <div style={styles.metaRow}>
+                  <span style={{ ...styles.badge, color: statusColor, backgroundColor: badgeBg }}>
+                    {item.status?.toUpperCase()}
+                  </span>
+                  <span style={styles.category}>{item.category}</span>
+                </div>
+                <h1 style={styles.title}>{item.title}</h1>
+                <div style={styles.locationDate}>
+                  <span>📍 {item.location}</span>
+                  <span>📅 {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'Unknown date'}</span>
+                </div>
+              </div>
             </div>
-          ) : (
-            <p style={{ color: 'var(--text-muted)' }}>Contact information is unavailable.</p>
-          )}
+
+            {/* Body Section */}
+            <div style={styles.body}>
+              <h3 style={styles.sectionTitle}>Description</h3>
+              <p style={styles.description}>{item.description}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar Column */}
+        <div style={styles.sidebarColumn}>
+          <div style={styles.contactCard}>
+            <h3 style={styles.sectionTitle}>Posted By</h3>
+            {item.postedBy ? (
+              <div style={styles.contactInfo}>
+                <div style={styles.contactItem}>
+                  <span style={styles.contactLabel}>Name</span>
+                  <p style={styles.contactName}>{item.postedBy.name}</p>
+                </div>
+                
+                <div style={styles.contactDetails}>
+                  {item.postedBy.email && (
+                    <div style={styles.contactItem}>
+                      <span style={styles.contactLabel}>Email</span>
+                      <a href={`mailto:${item.postedBy.email}`} style={styles.contactLink}>
+                        ✉️ {item.postedBy.email}
+                      </a>
+                    </div>
+                  )}
+                  {item.postedBy.phoneNumber && (
+                    <div style={styles.contactItem}>
+                      <span style={styles.contactLabel}>Phone Number</span>
+                      <a href={`tel:${item.postedBy.phoneNumber}`} style={styles.contactLink}>
+                        📞 {item.postedBy.phoneNumber}
+                      </a>
+                    </div>
+                  )}
+                </div>
+                <a 
+                  href={`mailto:${item.postedBy.email}?subject=Regarding your ${item.status} item: ${item.title}`}
+                  className="btn-primary" 
+                  style={{ ...styles.contactBtn, backgroundColor: statusColor }}
+                >
+                  Contact Poster
+                </a>
+              </div>
+            ) : (
+              <p style={{ color: 'var(--text-muted)' }}>Contact information is unavailable.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -123,7 +140,7 @@ function ItemDetail() {
 
 const styles = {
   container: {
-    maxWidth: '800px',
+    maxWidth: '1200px',
     margin: '0 auto',
     padding: '3rem 2rem',
   },
@@ -206,9 +223,21 @@ const styles = {
     color: 'var(--text-muted)',
     fontSize: '0.9rem',
   },
+  pageLayout: {
+    display: 'flex',
+    gap: '2rem',
+    alignItems: 'flex-start',
+  },
+  mainColumn: {
+    flex: 2,
+    minWidth: 0,
+  },
+  sidebarColumn: {
+    flex: 1,
+    minWidth: 0,
+  },
   body: {
     padding: '2rem',
-    borderBottom: '1px solid rgba(58, 66, 96, 0.4)',
   },
   sectionTitle: {
     fontSize: '1.2rem',
@@ -222,24 +251,40 @@ const styles = {
     lineHeight: '1.6',
     whiteSpace: 'pre-wrap',
   },
-  contactSection: {
+  contactCard: {
+    backgroundColor: 'var(--surface-card)',
+    border: '1px solid var(--border-muted)',
+    borderRadius: 'var(--border-radius)',
     padding: '2rem',
-    backgroundColor: 'rgba(26, 31, 53, 0.3)',
+    position: 'sticky',
+    top: '100px',
   },
   contactInfo: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '1rem',
+  },
+  contactItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.25rem',
+    marginBottom: '1rem',
+  },
+  contactLabel: {
+    fontSize: '0.75rem',
+    fontWeight: '700',
+    color: 'var(--text-muted)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
   },
   contactName: {
     fontSize: '1.1rem',
     fontWeight: '600',
     color: 'var(--text-white)',
+    margin: 0,
   },
   contactDetails: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.5rem',
   },
   contactLink: {
     color: 'var(--text-muted)',
