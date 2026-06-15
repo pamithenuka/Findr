@@ -159,3 +159,47 @@ body {
     border-bottom: 1px solid rgba(58, 66, 96, 0.4);
   }
 }
+
+/* Category Pill Hover & Active Effects */
+.category-pill-btn:hover {
+  border-color: var(--accent-teal) !important;
+  color: var(--text-white) !important;
+  background-color: rgba(37, 43, 69, 0.9) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(45, 212, 191, 0.15);
+}
+
+.category-pill-btn:active {
+  transform: translateY(0);
+}
+
+/* Hide default scrollbars for category list on Webkit browsers */
+.category-scrollbar::-webkit-scrollbar {
+  height: 5px;
+}
+.category-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.category-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-muted);
+  border-radius: 4px;
+}
+.category-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Filter button and panel hover effects */
+.filter-toggle-btn:hover {
+  border-color: var(--accent-teal) !important;
+  color: var(--text-white) !important;
+  background-color: var(--border-muted) !important;
+}
+
+.popover-reset-btn:hover {
+  color: var(--accent-coral) !important;
+}
+
+.popover-apply-btn:hover {
+  background-color: var(--accent-teal-dark) !important;
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.4) !important;
+}
