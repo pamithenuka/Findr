@@ -209,3 +209,43 @@ body {
   background-color: var(--accent-teal-dark) !important;
   box-shadow: 0 0 10px rgba(45, 212, 191, 0.4) !important;
 }
+
+/* CTA and Quick Action Button Hover Effects */
+.cta-btn-lost:hover {
+  background-color: var(--accent-coral) !important;
+  color: var(--bg-navy) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35);
+}
+.cta-btn-lost:active {
+  transform: translateY(0);
+}
+
+.cta-btn-found:hover {
+  background-color: var(--accent-teal-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(45, 212, 191, 0.4);
+}
+.cta-btn-found:active {
+  transform: translateY(0);
+}
+
+/* Dashboard Action Buttons Hover */
+.action-btn-lost:hover {
+  background-color: var(--accent-coral) !important;
+  color: var(--bg-navy) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+.action-btn-lost:active {
+  transform: translateY(0);
+}
+
+.action-btn-found:hover {
+  background-color: var(--accent-teal-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(45, 212, 191, 0.35);
+}
+.action-btn-found:active {
+  transform: translateY(0);
+}

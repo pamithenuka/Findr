@@ -166,12 +166,14 @@ function Dashboard() {
               <button 
                 onClick={() => navigate('/report', { state: { openForm: 'lost' } })}
                 style={styles.actionBtnLost}
+                className="action-btn-lost"
               >
                 <Search size={16} style={{ marginRight: '6px' }} /> I Lost Something
               </button>
               <button 
                 onClick={() => navigate('/report', { state: { openForm: 'found' } })}
                 style={styles.actionBtnFound}
+                className="action-btn-found"
               >
                 <Handshake size={16} style={{ marginRight: '6px' }} /> I Found Something
               </button>

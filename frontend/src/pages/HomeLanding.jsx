@@ -105,10 +105,10 @@ function HomeLanding() {
         </p>
 
         <div style={styles.ctaGroup}>
-          <button onClick={() => handleAction('lost')} style={styles.lostBtn}>
+          <button onClick={() => handleAction('lost')} style={styles.lostBtn} className="cta-btn-lost">
             <Search size={18} style={{ verticalAlign: 'text-bottom', marginRight: '6px' }}/> I Lost Something
           </button>
-          <button onClick={() => handleAction('found')} style={styles.foundBtn}>
+          <button onClick={() => handleAction('found')} style={styles.foundBtn} className="cta-btn-found">
             <Handshake size={18} style={{ verticalAlign: 'text-bottom', marginRight: '6px' }}/> I Found Something
           </button>
         </div>
