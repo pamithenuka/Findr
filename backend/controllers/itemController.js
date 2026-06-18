@@ -104,6 +104,43 @@ exports.resolveItem = async (req, res) => {
 };
 
 
+
+exports.updateItem = async (req, res) => {
+    try {
+        const item = await Item.findById(req.params.id);
+
+        if (!item) {
+            return res.status(404).json({ message: 'Item not found' });
+        }
+
+        // Only the owner or an admin can edit
+        if (item.postedBy.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+            return res.status(401).json({ message: 'Not authorized to edit this item' });
+        }
+
+        // Update fields if provided
+        const { title, description, category, status, location, dateLostFound } = req.body;
+        if (title) item.title = title;
+        if (description) item.description = description;
+        if (category) item.category = category;
+        if (status) item.status = status;
+        if (location) item.location = location;
+        if (dateLostFound) item.dateLostFound = dateLostFound;
+
+        // Handle new image upload
+        if (req.file) {
+            item.imageUrl = `/uploads/${req.file.filename}`;
+        }
+
+        await item.save();
+
+        res.json({ message: 'Item updated successfully', item });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error updating item', error: error.message });
+    }
+};
+
+
 exports.deleteItem = async (req, res) => {
     try {
         const item = await Item.findById(req.params.id);

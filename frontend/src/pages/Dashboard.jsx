@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import API from '../utils/api';
-import { Search, Handshake, CheckCircle, MapPin, Award, FileText, Plus, Trash2 } from 'lucide-react';
+import { Search, Handshake, CheckCircle, MapPin, Award, FileText, Plus, Trash2, Pencil } from 'lucide-react';
 
 function Dashboard() {
   const location = useLocation();
@@ -242,12 +242,21 @@ function Dashboard() {
                     
                     <div style={styles.actionGroup}>
                       {!isResolved && (
-                        <button 
-                          onClick={() => handleResolve(item._id)}
-                          style={styles.resolveBtn}
-                        >
-                          <CheckCircle size={14} style={{ verticalAlign: 'text-bottom', marginRight: '2px' }} /> Resolve
-                        </button>
+                        <>
+                          <button 
+                            onClick={() => navigate(`/report/${item._id}`)}
+                            style={styles.editBtn}
+                            aria-label="Edit listing"
+                          >
+                            <Pencil size={14} />
+                          </button>
+                          <button 
+                            onClick={() => handleResolve(item._id)}
+                            style={styles.resolveBtn}
+                          >
+                            <CheckCircle size={14} style={{ verticalAlign: 'text-bottom', marginRight: '2px' }} /> Resolve
+                          </button>
+                        </>
                       )}
                       <button 
                         onClick={() => handleDelete(item._id)}
@@ -418,6 +427,18 @@ const styles = {
     cursor: 'pointer', 
     transition: 'all 0.2s ease',
     whiteSpace: 'nowrap',
+  },
+  editBtn: { 
+    backgroundColor: 'transparent', 
+    color: 'var(--accent-teal)', 
+    border: '1px solid var(--accent-teal)', 
+    padding: '0.5rem', 
+    borderRadius: '6px', 
+    cursor: 'pointer', 
+    transition: 'all 0.2s ease',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   deleteBtn: { 
     backgroundColor: 'transparent', 

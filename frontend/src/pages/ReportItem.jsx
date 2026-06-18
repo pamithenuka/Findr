@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
 import API from '../utils/api';
 import { Search, Handshake, Calendar, ArrowLeft, Image as ImageIcon, MapPin } from 'lucide-react';
 
 function ReportItem() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { id } = useParams(); // If present, we're in edit mode
+
+  const isEditMode = !!id;
 
   // Redirect if not logged in
   useEffect(() => {
@@ -26,16 +29,50 @@ function ReportItem() {
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [existingImageUrl, setExistingImageUrl] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fetchingItem, setFetchingItem] = useState(false);
 
-  // Set initial status from location state if available
+  // Fetch item data when in edit mode
   useEffect(() => {
-    if (location.state?.openForm) {
+    if (isEditMode) {
+      const fetchItem = async () => {
+        try {
+          setFetchingItem(true);
+          const response = await API.get(`/items/${id}`);
+          const item = response.data;
+          setFormData({
+            title: item.title || '',
+            description: item.description || '',
+            category: item.category || 'Electronics',
+            location: item.location || '',
+            status: item.status || 'lost',
+            dateLostFound: item.dateLostFound
+              ? new Date(item.dateLostFound).toISOString().split('T')[0]
+              : new Date().toISOString().split('T')[0]
+          });
+          if (item.imageUrl) {
+            setExistingImageUrl(item.imageUrl);
+          }
+        } catch (err) {
+          setError('Failed to load item details for editing.');
+          console.error('Error fetching item:', err);
+        } finally {
+          setFetchingItem(false);
+        }
+      };
+      fetchItem();
+    }
+  }, [id, isEditMode]);
+
+  // Set initial status from location state if available (only for new reports)
+  useEffect(() => {
+    if (!isEditMode && location.state?.openForm) {
       setFormData((prev) => ({ ...prev, status: location.state.openForm }));
     }
-  }, [location.state]);
+  }, [location.state, isEditMode]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,7 +83,14 @@ function ReportItem() {
     if (file) {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
+      setExistingImageUrl(''); // Clear existing image when new one is selected
     }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setExistingImageUrl('');
   };
 
   const handleSubmit = async (e) => {
@@ -67,27 +111,34 @@ function ReportItem() {
         data.append('image', imageFile);
       }
 
-      await API.post('/items', data);
-      setSuccess(`Success! Your ${formData.status} listing has been posted.`);
+      if (isEditMode) {
+        await API.put(`/items/${id}`, data);
+        setSuccess('Your listing has been updated successfully!');
+      } else {
+        await API.post('/items', data);
+        setSuccess(`Success! Your ${formData.status} listing has been posted.`);
+      }
       
-      // Clear form
-      setFormData({
-        title: '',
-        description: '',
-        category: 'Electronics',
-        location: '',
-        status: formData.status,
-        dateLostFound: new Date().toISOString().split('T')[0]
-      });
-      setImageFile(null);
-      setImagePreview(null);
-
-      // Auto-redirect to dashboard after 2 seconds to view active postings
+      // Auto-redirect to dashboard after 2 seconds
       setTimeout(() => {
         navigate('/dashboard');
       }, 2000);
+
+      // Only clear form if creating new (edit mode will redirect anyway)
+      if (!isEditMode) {
+        setFormData({
+          title: '',
+          description: '',
+          category: 'Electronics',
+          location: '',
+          status: formData.status,
+          dateLostFound: new Date().toISOString().split('T')[0]
+        });
+        setImageFile(null);
+        setImagePreview(null);
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to submit post.');
+      setError(err.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'submit'} post.`);
     } finally {
       setLoading(false);
     }
@@ -102,6 +153,17 @@ function ReportItem() {
     boxShadow: `0 0 10px ${isLost ? 'rgba(249, 115, 22, 0.1)' : 'rgba(45, 212, 191, 0.1)'}`
   };
 
+  // Determine which image to show as preview
+  const displayPreview = imagePreview || (existingImageUrl ? `http://localhost:5000${existingImageUrl}` : null);
+
+  if (fetchingItem) {
+    return (
+      <div style={styles.container} className="container fade-in">
+        <div style={styles.loadingBox}>Loading item details...</div>
+      </div>
+    );
+  }
+
   return (
     <div style={styles.container} className="container fade-in">
       <div style={styles.header}>
@@ -112,8 +174,12 @@ function ReportItem() {
 
       <div style={styles.card}>
         <div style={styles.titleSection}>
-          <h1 style={styles.title}>Report Campus Item</h1>
-          <p style={styles.subtitle}>Help your campus peers by reporting a lost or found item quickly and easily.</p>
+          <h1 style={styles.title}>{isEditMode ? 'Edit Listing' : 'Report Campus Item'}</h1>
+          <p style={styles.subtitle}>
+            {isEditMode
+              ? 'Update the details of your listing below.'
+              : 'Help your campus peers by reporting a lost or found item quickly and easily.'}
+          </p>
         </div>
 
         {/* Status Selector Tabs */}
@@ -223,17 +289,17 @@ function ReportItem() {
                   />
                   <label htmlFor="image-file" style={styles.uploadBtn}>
                     <ImageIcon size={18} style={{ marginRight: '6px' }} /> 
-                    {imageFile ? 'Change Image' : 'Select Image'}
+                    {imageFile ? 'Change Image' : (existingImageUrl ? 'Replace Image' : 'Select Image')}
                   </label>
                   {imageFile && <span style={styles.fileName}>{imageFile.name}</span>}
                 </div>
 
-                {imagePreview && (
+                {displayPreview && (
                   <div style={styles.previewContainer}>
-                    <img src={imagePreview} alt="Preview" style={styles.previewImage} />
+                    <img src={displayPreview} alt="Preview" style={styles.previewImage} />
                     <button 
                       type="button" 
-                      onClick={() => { setImageFile(null); setImagePreview(null); }} 
+                      onClick={handleRemoveImage} 
                       style={styles.removePreviewBtn}
                     >
                       ✕ Remove
@@ -254,7 +320,9 @@ function ReportItem() {
               opacity: loading ? 0.7 : 1
             }}
           >
-            {loading ? 'Submitting Report...' : `Submit`}
+            {loading
+              ? (isEditMode ? 'Saving Changes...' : 'Submitting Report...')
+              : (isEditMode ? 'Save Changes' : 'Submit')}
           </button>
         </form>
       </div>
@@ -426,6 +494,15 @@ const styles = {
     fontSize: '0.875rem',
     marginBottom: '1rem',
     fontWeight: '500'
+  },
+  loadingBox: {
+    backgroundColor: 'var(--surface-card)',
+    border: '1px solid var(--border-muted)',
+    borderRadius: 'var(--border-radius)',
+    padding: '3rem',
+    textAlign: 'center',
+    color: 'var(--text-muted)',
+    fontSize: '1rem',
   }
 };
 
