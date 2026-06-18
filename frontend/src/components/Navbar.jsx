@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Hand } from 'lucide-react';
+import { Hand, Plus } from 'lucide-react';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -28,6 +28,9 @@ function Navbar() {
         <div style={styles.navLinks} className="navbar-links">
           {user ? (
             <>
+              <Link to="/report" className="btn-primary" style={styles.reportBtn}>
+                <Plus size={16} style={{ marginRight: '4px', display: 'inline-block', verticalAlign: 'text-bottom' }} /> Report Item
+              </Link>
               <Link to="/dashboard" style={styles.link}>My Dashboard</Link>
               <Link to="/profile" style={styles.link}>Profile</Link>
               {user.role === 'admin' && (
@@ -95,6 +98,13 @@ const styles = {
   logoutBtn: {
     padding: '0.5rem 1rem',
     fontSize: '0.9rem',
+  },
+  reportBtn: {
+    padding: '0.5rem 1rem',
+    fontSize: '0.9rem',
+    display: 'flex',
+    alignItems: 'center',
+    textDecoration: 'none',
   }
 };
 

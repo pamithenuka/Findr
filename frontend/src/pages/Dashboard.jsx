@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import API from '../utils/api';
-import { Search, Handshake, CheckCircle, MapPin, Calendar } from 'lucide-react';
+import { Search, Handshake, CheckCircle, MapPin, Award, FileText, Plus, Trash2 } from 'lucide-react';
 
 function Dashboard() {
   const location = useLocation();
@@ -11,27 +11,23 @@ function Dashboard() {
   const storedUser = localStorage.getItem('findr_user');
   const user = storedUser ? JSON.parse(storedUser) : null;
 
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
   // State Management
   const [myItems, setMyItems] = useState([]);
-  const [formData, setFormData] = useState({
-    title: '', description: '', category: 'Electronics', location: '', status: 'lost', dateLostFound: new Date().toISOString().split('T')[0]
-  });
-  const [imageFile, setImageFile] = useState(null);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(true);
   const [showResolved, setShowResolved] = useState(false);
 
-  // Sync state from homepage button triggers
+  // Fetch this user's items
   useEffect(() => {
-    if (location.state?.openForm) {
-      setFormData((prev) => ({ ...prev, status: location.state.openForm }));
-    }
     fetchMyItems();
-  }, [location.state]);
+  }, []);
 
-  // Fetch this user's items via the dedicated server-side filtered endpoint
   const fetchMyItems = async () => {
     try {
       setHistoryLoading(true);
@@ -41,39 +37,6 @@ function Dashboard() {
       console.error('Error fetching personal history:', err);
     } finally {
       setHistoryLoading(false);
-    }
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Submit new item handler
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(''); setSuccess(''); setLoading(true);
-
-    try {
-      const data = new FormData();
-      data.append('title', formData.title);
-      data.append('description', formData.description);
-      data.append('category', formData.category);
-      data.append('location', formData.location);
-      data.append('status', formData.status);
-      data.append('dateLostFound', formData.dateLostFound);
-      if (imageFile) {
-        data.append('image', imageFile);
-      }
-
-      await API.post('/items', data);
-      setSuccess(`Success! Your ${formData.status} listing has been posted.`);
-      setFormData({ title: '', description: '', category: 'Electronics', location: '', status: formData.status, dateLostFound: new Date().toISOString().split('T')[0] });
-      setImageFile(null);
-      fetchMyItems(); // Refresh history immediately!
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to submit post.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -104,72 +67,123 @@ function Dashboard() {
     }
   };
 
-  // Filter items based on toggle
+  // Statistics calculation
+  const totalPostings = myItems.length;
+  const resolvedItemsCount = myItems.filter((item) => item.isResolved).length;
   const activeItems = myItems.filter((item) => !item.isResolved);
+  const activeItemsCount = activeItems.length;
+  const lostItemsCount = myItems.filter((item) => item.status?.toLowerCase() === 'lost').length;
+  const foundItemsCount = myItems.filter((item) => item.status?.toLowerCase() === 'found').length;
+  const successRate = totalPostings > 0 ? Math.round((resolvedItemsCount / totalPostings) * 100) : 0;
+
   const resolvedItems = myItems.filter((item) => item.isResolved);
   const displayedItems = showResolved ? myItems : activeItems;
 
-  const isLost = formData.status === 'lost';
-  const themeColor = isLost ? 'var(--accent-coral)' : 'var(--accent-teal)';
-  const activeTabStyle = {
-    backgroundColor: isLost ? 'rgba(249, 115, 22, 0.15)' : 'rgba(45, 212, 191, 0.15)',
-    borderColor: themeColor, color: themeColor,
-  };
-
   return (
     <div style={styles.container} className="container fade-in">
-      <h1 style={styles.pageTitle}>User Dashboard</h1>
-      <p style={styles.pageSubtitle}>Welcome back, {user?.name || 'Student'}! Manage your campus postings here.</p>
+      <div style={styles.headerRow}>
+        <div>
+          <h1 style={styles.pageTitle}>User Dashboard</h1>
+          <p style={styles.pageSubtitle}>Welcome back, {user?.name || 'Student'}! Track your reports and campus impact.</p>
+        </div>
+        <Link to="/report" className="btn-primary" style={styles.newReportBtn}>
+          <Plus size={16} style={{ marginRight: '6px' }} /> Report New Item
+        </Link>
+      </div>
 
-      <div style={styles.dashboardGrid}>
-        {/* LEFT COLUMN: THE INTERACTIVE POST CREATION FORM */}
-        <div style={styles.formCard}>
-          <h2 style={styles.sectionTitle}>Report an Item</h2>
-          
-          <div style={styles.toggleGroup}>
-            <button type="button" onClick={() => setFormData({ ...formData, status: 'lost' })} style={{ ...styles.toggleTab, ...(isLost ? activeTabStyle : {}) }}><Search size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> Lost Item</button>
-            <button type="button" onClick={() => setFormData({ ...formData, status: 'found' })} style={{ ...styles.toggleTab, ...(!isLost ? activeTabStyle : {}) }}><Handshake size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> Found Item</button>
+      <div style={styles.dashboardGrid} className="dashboard-grid-layout">
+        {/* LEFT COLUMN: STATISTICS PANEL */}
+        <div style={styles.leftColumn}>
+          {/* Welcome Card & Summary */}
+          <div style={styles.welcomeCard}>
+            <h3 style={styles.cardHeaderTitle}>Your Impact Overview</h3>
+            <p style={styles.welcomeText}>
+              Thank you for keeping our campus connected! By reporting items, you help classmates recover lost belongings.
+            </p>
+            
+            <div style={styles.progressContainer}>
+              <div style={styles.progressHeader}>
+                <span style={styles.progressLabel}>Reunion Success Rate</span>
+                <span style={styles.progressValue}>{successRate}%</span>
+              </div>
+              <div style={styles.progressBarTrack}>
+                <div style={{ ...styles.progressBarFill, width: `${successRate}%` }} />
+              </div>
+              <p style={styles.progressSubtext}>
+                {resolvedItemsCount} of your {totalPostings} reported posts successfully resolved.
+              </p>
+            </div>
           </div>
 
-          {error && <div style={styles.errorAlert}>{error}</div>}
-          {success && <div style={{ ...styles.successAlert, color: themeColor, borderColor: themeColor }}>{success}</div>}
+          {/* Stats Grid */}
+          <div style={styles.statsGrid}>
+            <div style={styles.statBox}>
+              <div style={{ ...styles.statIconWrapper, color: 'var(--accent-teal)' }}>
+                <FileText size={20} />
+              </div>
+              <div>
+                <div style={styles.statNumber}>{totalPostings}</div>
+                <div style={styles.statLabel}>Total Listings</div>
+              </div>
+            </div>
 
-          <form onSubmit={handleSubmit} style={styles.form}>
-            <div style={styles.inputGroup}><label style={styles.label}>Item Name / Title</label><input type="text" name="title" required style={styles.input} placeholder="e.g., Black Dell Laptop" value={formData.title} onChange={handleChange} /></div>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Category</label>
-              <select name="category" style={styles.select} value={formData.category} onChange={handleChange}>
-                <option value="Electronics">Electronics</option>
-                <option value="Documents &amp; IDs">Documents &amp; ID Cards</option>
-                <option value="Bags &amp; Wallets">Bags &amp; Wallets</option>
-                <option value="Clothing">Clothing</option>
-                <option value="Keys">Keys</option>
-                <option value="Others">Other Belongings</option>
-              </select>
+            <div style={styles.statBox}>
+              <div style={{ ...styles.statIconWrapper, color: '#22c55e' }}>
+                <CheckCircle size={20} />
+              </div>
+              <div>
+                <div style={styles.statNumber}>{resolvedItemsCount}</div>
+                <div style={styles.statLabel}>Resolved Posts</div>
+              </div>
             </div>
-            <div style={styles.inputGroup}><label style={styles.label}>Campus Location</label><input type="text" name="location" required style={styles.input} placeholder="e.g., Main Canteen" value={formData.location} onChange={handleChange} /></div>
-            <div style={styles.inputGroup}><label style={styles.label}><Calendar size={16} style={{ verticalAlign: 'text-bottom', marginRight: '4px' }}/> Date Lost / Found</label><input type="date" name="dateLostFound" required style={styles.input} value={formData.dateLostFound} onChange={handleChange} /></div>
-            <div style={styles.inputGroup}><label style={styles.label}>Detailed Description</label><textarea name="description" required style={styles.textarea} rows="4" placeholder="Provide distinctive features..." value={formData.description} onChange={handleChange} /></div>
-            <div style={styles.inputGroup}>
-              <label style={styles.label}>Upload Image (Optional)</label>
-              <input 
-                type="file" 
-                accept="image/*" 
-                onChange={(e) => setImageFile(e.target.files[0])} 
-                style={styles.fileInput} 
-              />
+
+            <div style={styles.statBox}>
+              <div style={{ ...styles.statIconWrapper, color: 'var(--accent-coral)' }}>
+                <Search size={20} />
+              </div>
+              <div>
+                <div style={styles.statNumber}>{lostItemsCount}</div>
+                <div style={styles.statLabel}>Lost Items</div>
+              </div>
             </div>
-            <button type="submit" disabled={loading} style={{ ...styles.submitBtn, backgroundColor: isLost ? 'var(--accent-coral)' : 'var(--accent-teal)', color: isLost ? 'var(--text-white)' : 'var(--bg-navy)' }}>
-              {loading ? 'Submitting...' : `Submit ${formData.status.toUpperCase()} Listing`}
-            </button>
-          </form>
+
+            <div style={styles.statBox}>
+              <div style={{ ...styles.statIconWrapper, color: 'var(--accent-teal)' }}>
+                <Handshake size={20} />
+              </div>
+              <div>
+                <div style={styles.statNumber}>{foundItemsCount}</div>
+                <div style={styles.statLabel}>Found Items</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Action Center */}
+          <div style={styles.actionCard}>
+            <h3 style={styles.actionTitle}>Need to report a new item?</h3>
+            <p style={styles.actionText}>Choose a category below to submit a listing immediately.</p>
+            <div style={styles.actionBtnRow}>
+              <button 
+                onClick={() => navigate('/report', { state: { openForm: 'lost' } })}
+                style={styles.actionBtnLost}
+              >
+                <Search size={16} style={{ marginRight: '6px' }} /> I Lost Something
+              </button>
+              <button 
+                onClick={() => navigate('/report', { state: { openForm: 'found' } })}
+                style={styles.actionBtnFound}
+              >
+                <Handshake size={16} style={{ marginRight: '6px' }} /> I Found Something
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* RIGHT COLUMN: LIVE ACTIVE POSTINGS HISTORY */}
         <div style={styles.historyCard}>
           <div style={styles.historyHeader}>
             <h2 style={styles.sectionTitle}>
-              My Postings ({activeItems.length} active{resolvedItems.length > 0 ? `, ${resolvedItems.length} resolved` : ''})
+              My Postings ({activeItemsCount} active{resolvedItemsCount > 0 ? `, ${resolvedItemsCount} resolved` : ''})
             </h2>
             {resolvedItems.length > 0 && (
               <button 
@@ -232,14 +246,15 @@ function Dashboard() {
                           onClick={() => handleResolve(item._id)}
                           style={styles.resolveBtn}
                         >
-                          <CheckCircle size={14} style={{ verticalAlign: 'text-bottom', marginRight: '2px' }}/> Resolve
+                          <CheckCircle size={14} style={{ verticalAlign: 'text-bottom', marginRight: '2px' }} /> Resolve
                         </button>
                       )}
                       <button 
                         onClick={() => handleDelete(item._id)}
                         style={styles.deleteBtn}
+                        aria-label="Delete listing"
                       >
-                        Delete
+                        <Trash2 size={14} />
                       </button>
                     </div>
                   </div>
@@ -255,27 +270,107 @@ function Dashboard() {
 
 const styles = {
   container: { maxWidth: '1200px', margin: '0 auto', padding: '3rem 2rem' },
+  headerRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' },
   pageTitle: { fontSize: '2.25rem', fontWeight: '800', letterSpacing: '-1px', marginBottom: '0.25rem' },
-  pageSubtitle: { color: 'var(--text-muted)', fontSize: '1rem', marginBottom: '3rem' },
-  dashboardGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '2rem', alignItems: 'start' },
-  formCard: { backgroundColor: 'var(--surface-card)', border: '1px solid var(--border-muted)', borderRadius: 'var(--border-radius)', padding: '2rem' },
+  pageSubtitle: { color: 'var(--text-muted)', fontSize: '1rem' },
+  newReportBtn: { display: 'flex', alignItems: 'center', textDecoration: 'none', padding: '0.75rem 1.25rem', fontSize: '0.95rem' },
+  dashboardGrid: { display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '2rem', alignItems: 'start' },
+  leftColumn: { display: 'flex', flexDirection: 'column', gap: '1.5rem' },
+  
+  // Welcome/Impact Card
+  welcomeCard: { 
+    backgroundColor: 'var(--surface-card)', 
+    border: '1px solid var(--border-muted)', 
+    borderRadius: 'var(--border-radius)', 
+    padding: '1.75rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem'
+  },
+  cardHeaderTitle: { fontSize: '1.15rem', fontWeight: '700', color: 'var(--text-white)' },
+  welcomeText: { color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.5' },
+  
+  // Progress/Success Rate indicator
+  progressContainer: { marginTop: '0.5rem' },
+  progressHeader: { display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.5rem' },
+  progressLabel: { color: 'var(--text-white)' },
+  progressValue: { color: 'var(--accent-teal)' },
+  progressBarTrack: { height: '8px', backgroundColor: 'var(--bg-navy)', borderRadius: '4px', overflow: 'hidden' },
+  progressBarFill: { height: '100%', backgroundColor: 'var(--accent-teal)', borderRadius: '4px', transition: 'width 0.5s ease-out' },
+  progressSubtext: { color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.5rem' },
+  
+  // Stats Grid
+  statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' },
+  statBox: { 
+    backgroundColor: 'var(--surface-card)', 
+    border: '1px solid var(--border-muted)', 
+    borderRadius: 'var(--border-radius)', 
+    padding: '1.25rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem'
+  },
+  statIconWrapper: { 
+    backgroundColor: 'var(--bg-navy)', 
+    borderRadius: '8px', 
+    padding: '0.65rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  statNumber: { fontSize: '1.35rem', fontWeight: '800', color: 'var(--text-white)', lineHeight: '1.1' },
+  statLabel: { fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '500', marginTop: '0.2rem' },
+  
+  // Quick Action Card
+  actionCard: { 
+    backgroundColor: 'var(--surface-card)', 
+    border: '1px solid var(--border-muted)', 
+    borderRadius: 'var(--border-radius)', 
+    padding: '1.5rem',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.75rem'
+  },
+  actionTitle: { fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-white)' },
+  actionText: { color: 'var(--text-muted)', fontSize: '0.85rem' },
+  actionBtnRow: { display: 'flex', gap: '0.75rem', marginTop: '0.5rem' },
+  actionBtnLost: { 
+    flex: 1, 
+    backgroundColor: 'transparent', 
+    color: 'var(--accent-coral)', 
+    border: '1px solid var(--accent-coral)', 
+    padding: '0.65rem', 
+    borderRadius: '6px', 
+    fontWeight: '600', 
+    fontSize: '0.85rem', 
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s ease'
+  },
+  actionBtnFound: { 
+    flex: 1, 
+    backgroundColor: 'var(--accent-teal)', 
+    color: 'var(--bg-navy)', 
+    border: '1px solid var(--accent-teal)', 
+    padding: '0.65rem', 
+    borderRadius: '6px', 
+    fontWeight: '600', 
+    fontSize: '0.85rem', 
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 0.2s ease'
+  },
+  
+  // History Column
   historyCard: { backgroundColor: 'var(--surface-card)', border: '1px solid var(--border-muted)', borderRadius: 'var(--border-radius)', padding: '2rem', minHeight: '480px', display: 'flex', flexDirection: 'column' },
   historyHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' },
   sectionTitle: { fontSize: '1.35rem', fontWeight: '700', letterSpacing: '-0.5px', margin: 0 },
-  toggleGroup: { display: 'flex', gap: '1rem', marginBottom: '1.5rem' },
-  toggleTab: { flex: 1, padding: '0.75rem', border: '1px solid var(--border-muted)', backgroundColor: 'var(--bg-navy)', color: 'var(--text-muted)', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', transition: 'all 0.2s ease' },
-  form: { display: 'flex', flexDirection: 'column', gap: '1.25rem' },
-  inputGroup: { display: 'flex', flexDirection: 'column', gap: '0.5rem' },
-  label: { fontSize: '0.85rem', fontWeight: '500', color: 'var(--text-white)' },
-  input: { backgroundColor: 'var(--bg-navy)', border: '1px solid var(--border-muted)', borderRadius: '8px', padding: '0.75rem 1rem', color: 'var(--text-white)', fontSize: '0.95rem', outline: 'none' },
-  select: { backgroundColor: 'var(--bg-navy)', border: '1px solid var(--border-muted)', borderRadius: '8px', padding: '0.75rem 1rem', color: 'var(--text-white)', fontSize: '0.95rem', outline: 'none', cursor: 'pointer' },
-  textarea: { backgroundColor: 'var(--bg-navy)', border: '1px solid var(--border-muted)', borderRadius: '8px', padding: '0.75rem 1rem', color: 'var(--text-white)', fontSize: '0.95rem', outline: 'none', resize: 'none' },
-  fileInput: { color: 'var(--text-muted)', fontSize: '0.9rem', padding: '0.5rem 0', cursor: 'pointer' },
-  submitBtn: { border: 'none', padding: '1rem', borderRadius: '8px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer', marginTop: '0.5rem', transition: 'opacity 0.2s ease' },
   placeholderBox: { border: '2px dashed var(--border-muted)', borderRadius: '8px', padding: '3rem 2rem', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 },
   statusText: { color: 'var(--text-muted)', textAlign: 'center', margin: 'auto 0' },
-  errorAlert: { backgroundColor: 'rgba(249, 115, 22, 0.1)', color: 'var(--accent-coral)', border: '1px solid var(--accent-coral)', padding: '0.75rem 1rem', borderRadius: '8px', fontSize: '0.875rem', marginBottom: '1.5rem' },
-  successAlert: { backgroundColor: 'rgba(45, 212, 191, 0.05)', border: '1px solid', padding: '0.75rem 1rem', borderRadius: '8px', fontSize: '0.875rem', marginBottom: '1.5rem', fontWeight: '500' },
   
   // History list layout
   historyList: { display: 'flex', flexDirection: 'column', gap: '1rem' },
@@ -310,6 +405,7 @@ const styles = {
     display: 'flex',
     gap: '0.5rem',
     flexShrink: 0,
+    alignItems: 'center'
   },
   resolveBtn: { 
     backgroundColor: 'transparent', 
@@ -327,13 +423,13 @@ const styles = {
     backgroundColor: 'transparent', 
     color: 'var(--accent-coral)', 
     border: '1px solid var(--accent-coral)', 
-    padding: '0.4rem 0.8rem', 
+    padding: '0.5rem', 
     borderRadius: '6px', 
-    fontSize: '0.8rem', 
-    fontWeight: '600', 
     cursor: 'pointer', 
     transition: 'all 0.2s ease',
-    whiteSpace: 'nowrap',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   toggleResolvedBtn: {
     background: 'none',

@@ -158,6 +158,12 @@ body {
     border-right: none !important;
     border-bottom: 1px solid rgba(58, 66, 96, 0.4);
   }
+
+  /* Make dashboard grid stack on mobile */
+  .dashboard-grid-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
 }
 
 /* Category Pill Hover & Active Effects */

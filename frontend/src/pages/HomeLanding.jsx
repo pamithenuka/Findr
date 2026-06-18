@@ -78,7 +78,7 @@ function HomeLanding() {
     if (!isAuthenticated) {
       navigate('/login');
     } else {
-      navigate('/dashboard', { state: { openForm: type } });
+      navigate('/report', { state: { openForm: type } });
     }
   };
 

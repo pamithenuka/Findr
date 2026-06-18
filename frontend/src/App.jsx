@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import ItemDetail from './pages/ItemDetail';
 import Profile from './pages/Profile';
 import AdminPanel from './pages/AdminPanel';
+import ReportItem from './pages/ReportItem';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/report" element={<ReportItem />} />
       </Routes>
     </Router>
   );
